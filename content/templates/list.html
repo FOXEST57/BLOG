@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    {% if messages %} {% for message in messages %}
+    <p class="{{ message.tags }}">{{ message }}</p>
+    {% endfor %} {% endif %} {% if user.is_authenticated %}
+    <h1>Bienvenue {{user.username}} !</h1>
+    <form method="POST" action="{% url 'logout' %}">
+      {% csrf_token %}
+      <button type="submit" name="logout">Se déconnecter</button>
+    </form>
+    {% else %}
+    <h1>Bienvenue sur notre site !</h1>
+    {% endif %} {% for article in articles %}
+    <h2>
+      <a href="{% url 'articles_details' article.id %}">{{ article.title }}</a>
+    </h2>
+    <p>{{ article.content }}</p>
+    {% if article.author %}
+    <p>Auteur : {{ article.author.first_name }}</p>
+    {% else %}
+    <p>Auteur : Anonyme</p>
+    {% endif %}
+    <p>Date: {{ article.publication_date }}</p>
+    {% endfor %}
+  </body>
+</html>

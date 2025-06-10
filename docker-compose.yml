@@ -1,0 +1,24 @@
+version: "3"
+
+services:
+    app:
+        build: .
+        ports:
+            - "8000:8000"
+
+    database:
+        image: postgres:latest
+        environment:
+            POSTGRES_USER: user
+            POSTGRES_PASSWORD: password
+            POSTGRES_DB: MYDATRABASE
+        ports:
+            - "5432:5432"
+    webserver:
+        image: nginx:latest
+        volumes:
+            - ./config/nginx.conf:/etc/nginx/nginx.conf
+        ports:
+            - "8080:80"
+        depends_on:
+            - app
