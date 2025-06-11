@@ -39,7 +39,12 @@ SECRET_KEY = config('SECRET_KEY')
 # Variante decouple:
 DEBUG = config('DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost']
+
+CSRF_TRUSTED_ORIGINS =[
+    "http://localhost:8080",
+    "http://127.0.0.1:8080"
+]
 
 
 # Application definition
@@ -87,13 +92,27 @@ WSGI_APPLICATION = 'blog.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+if (config('USE_SQLITE', default=True, cast=bool)):
+    DATABASES = {
+        'default': {
+             'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+         
+        }      
 }
+
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': config('POSTGRES_DB'),
+            'USER': config('POSTGRES_USER'),
+            'PASSWORD': config('POSTGRES_PASSWORD'),
+            'HOST': config('POSTGRES_HOST',default='localhost'),
+            'PORT': config('POSTGRES_PORT',default='5432')
+    }
+        }
+    
 
 
 # Password validation
@@ -131,6 +150,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
